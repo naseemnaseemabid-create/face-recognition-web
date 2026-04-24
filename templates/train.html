@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Train Model - Face Recognition AI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0d1117; font-family: 'Segoe UI', sans-serif; color: #e6edf3; }
+        .sidebar {
+            width: 200px; background: #161b22; height: 100vh;
+            position: fixed; padding: 20px 0; border-right: 1px solid #30363d;
+        }
+        .sidebar h2 { color: #00d4ff; padding: 0 20px; font-size: 14px; margin-bottom: 24px; }
+        .sidebar a {
+            display: block; padding: 12px 20px; color: #8b949e;
+            text-decoration: none; font-size: 14px;
+        }
+        .sidebar a:hover, .sidebar a.active { color: #00d4ff; background: #0d1117; }
+        .main { margin-left: 200px; padding: 30px; }
+        h1 { font-size: 24px; margin-bottom: 24px; }
+        .train-box {
+            background: #161b22; border-radius: 10px;
+            padding: 30px; max-width: 500px; border: 1px solid #30363d;
+            text-align: center;
+        }
+        .icon { font-size: 64px; margin-bottom: 16px; }
+        p { color: #8b949e; font-size: 14px; margin-bottom: 24px; }
+        .btn {
+            padding: 14px 32px; border-radius: 8px; border: none;
+            font-size: 15px; font-weight: bold; cursor: pointer;
+        }
+        .btn-purple { background: #7c3aed; color: #fff; }
+        .btn-purple:hover { background: #6d28d9; }
+        .success {
+            background: #1b2d1b; color: #3fb950;
+            padding: 12px; border-radius: 6px; margin-top: 20px; font-size: 14px;
+        }
+        .error {
+            background: #2d1b1b; color: #f85149;
+            padding: 12px; border-radius: 6px; margin-top: 20px; font-size: 14px;
+        }
+        .loading { color: #00d4ff; margin-top: 16px; font-size: 14px; display: none; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>🎭 FACE RECOGNITION</h2>
+        <a href="/dashboard">📊 Dashboard</a>
+        <a href="/persons">👤 All Persons</a>
+        <a href="/attendance">✅ Attendance Log</a>
+        <a href="/register">➕ Register Person</a>
+        <a href="/train" class="active">🧠 Train Model</a>
+        <a href="/camera">📷 Start Camera</a>
+        <a href="/logout">🚪 Logout</a>
+    </div>
+    <div class="main">
+        <h1>🧠 Train Model</h1>
+        <div class="train-box">
+            <div class="icon">🧠</div>
+            <p>Click the button below to train the AI model with all registered face images. This may take a few minutes.</p>
+            {% if result %}
+                {% if result.success %}
+                <div class="success">✅ {{ result.message }}</div>
+                {% else %}
+                <div class="error">❌ {{ result.message }}</div>
+                {% endif %}
+            {% endif %}
+            <form method="POST" onsubmit="showLoading()">
+                <button type="submit" class="btn btn-purple">🧠 Start Training</button>
+            </form>
+            <div class="loading" id="loading">⏳ Training in progress... Please wait...</div>
+        </div>
+    </div>
+    <script>
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

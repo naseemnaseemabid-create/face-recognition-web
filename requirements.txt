@@ -1,0 +1,7 @@
+flask
+flask-login
+face-recognition
+opencv-python
+numpy
+Pillow
+gunicorn

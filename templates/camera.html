@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Camera - Face Recognition AI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0d1117; font-family: 'Segoe UI', sans-serif; color: #e6edf3; }
+        .sidebar {
+            width: 200px; background: #161b22; height: 100vh;
+            position: fixed; padding: 20px 0; border-right: 1px solid #30363d;
+        }
+        .sidebar h2 { color: #00d4ff; padding: 0 20px; font-size: 14px; margin-bottom: 24px; }
+        .sidebar a {
+            display: block; padding: 12px 20px; color: #8b949e;
+            text-decoration: none; font-size: 14px;
+        }
+        .sidebar a:hover, .sidebar a.active { color: #00d4ff; background: #0d1117; }
+        .main { margin-left: 200px; padding: 30px; }
+        h1 { font-size: 24px; margin-bottom: 24px; }
+        .camera-container { display: flex; gap: 20px; }
+        .video-box {
+            background: #161b22; border-radius: 10px;
+            padding: 20px; border: 1px solid #30363d; flex: 1;
+        }
+        #video { width: 100%; border-radius: 8px; }
+        .result-box {
+            background: #161b22; border-radius: 10px;
+            padding: 20px; border: 1px solid #30363d; width: 280px;
+        }
+        .result-box h2 { font-size: 16px; margin-bottom: 16px; color: #00d4ff; }
+        .status { padding: 10px; border-radius: 6px; margin-bottom: 12px; font-size: 14px; }
+        .status.detected { background: #1b2d1b; color: #3fb950; }
+        .status.unknown { background: #2d1b1b; color: #f85149; }
+        .info-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
+        .info-label { color: #8b949e; }
+        .info-value { color: #e6edf3; font-weight: bold; }
+        .btn {
+            padding: 12px 24px; border-radius: 8px; border: none;
+            font-size: 14px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px;
+        }
+        .btn-cyan { background: #00d4ff; color: #000; }
+        .btn-red { background: #f85149; color: #fff; }
+        canvas { display: none; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>🎭 FACE RECOGNITION</h2>
+        <a href="/dashboard">📊 Dashboard</a>
+        <a href="/persons">👤 All Persons</a>
+        <a href="/attendance">✅ Attendance Log</a>
+        <a href="/register">➕ Register Person</a>
+        <a href="/camera" class="active">📷 Start Camera</a>
+        <a href="/logout">🚪 Logout</a>
+    </div>
+    <div class="main">
+        <h1>📷 Live Face Recognition</h1>
+        <div class="camera-container">
+            <div class="video-box">
+                <video id="video" autoplay></video>
+                <canvas id="canvas" width="640" height="480"></canvas>
+                <br><br>
+                <button class="btn btn-cyan" onclick="startCamera()">▶ Start Camera</button>
+                <button class="btn btn-red" onclick="stopCamera()" style="margin-top:8px">⏹ Stop Camera</button>
+            </div>
+            <div class="result-box">
+                <h2>Recognition Details</h2>
+                <div class="status" id="statusBox">Waiting...</div>
+                <div class="info-row">
+                    <span class="info-label">NAME</span>
+                    <span class="info-value" id="nameVal">—</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">DEPARTMENT</span>
+                    <span class="info-value" id="deptVal">—</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">SEMESTER</span>
+                    <span class="info-value" id="semVal">—</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">CONFIDENCE</span>
+                    <span class="info-value" id="confVal">—</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let stream = null;
+        let interval = null;
+
+        async function startCamera() {
+            stream = await navigator.mediaDevices.getUserMedia({video: true});
+            document.getElementById('video').srcObject = stream;
+            interval = setInterval(recognizeFace, 2000);
+        }
+
+        function stopCamera() {
+            if (stream) { stream.getTracks().forEach(t => t.stop()); }
+            if (interval) clearInterval(interval);
+            document.getElementById('statusBox').textContent = 'Camera stopped.';
+        }
+
+        async function recognizeFace() {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, 640, 480);
+            const imageData = canvas.toDataURL('image/jpeg', 0.8);
+
+            const response = await fetch('/recognize', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({image: imageData})
+            });
+            const result = await response.json();
+
+            if (result.name && result.name !== 'Unknown Person') {
+                document.getElementById('statusBox').className = 'status detected';
+                document.getElementById('statusBox').textContent = '✅ Person Detected!';
+                document.getElementById('nameVal').textContent = result.name;
+                document.getElementById('deptVal').textContent = result.department || '—';
+                document.getElementById('semVal').textContent = result.semester || '—';
+                document.getElementById('confVal').textContent = result.confidence + '%';
+            } else {
+                document.getElementById('statusBox').className = 'status unknown';
+                document.getElementById('statusBox').textContent = '❌ Unknown Person';
+                document.getElementById('nameVal').textContent = '—';
+                document.getElementById('deptVal').textContent = '—';
+                document.getElementById('semVal').textContent = '—';
+                document.getElementById('confVal').textContent = '—';
+            }
+        }
+    </script>
+</body>
+</html>

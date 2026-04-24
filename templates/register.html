@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Person - Face Recognition AI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0d1117; font-family: 'Segoe UI', sans-serif; color: #e6edf3; }
+        .sidebar {
+            width: 200px; background: #161b22; height: 100vh;
+            position: fixed; padding: 20px 0; border-right: 1px solid #30363d;
+        }
+        .sidebar h2 { color: #00d4ff; padding: 0 20px; font-size: 14px; margin-bottom: 24px; }
+        .sidebar a {
+            display: block; padding: 12px 20px; color: #8b949e;
+            text-decoration: none; font-size: 14px;
+        }
+        .sidebar a:hover, .sidebar a.active { color: #00d4ff; background: #0d1117; }
+        .main { margin-left: 200px; padding: 30px; }
+        h1 { font-size: 24px; margin-bottom: 24px; }
+        .form-box {
+            background: #161b22; border-radius: 10px;
+            padding: 30px; max-width: 500px; border: 1px solid #30363d;
+        }
+        label { color: #8b949e; font-size: 13px; display: block; margin-bottom: 6px; }
+        input, textarea {
+            width: 100%; padding: 10px 14px;
+            background: #0d1117; border: 1px solid #30363d;
+            border-radius: 6px; color: #e6edf3; font-size: 14px; margin-bottom: 16px;
+        }
+        input:focus, textarea:focus { outline: none; border-color: #00d4ff; }
+        .btn {
+            padding: 12px 24px; border-radius: 8px; border: none;
+            font-size: 14px; font-weight: bold; cursor: pointer;
+        }
+        .btn-cyan { background: #00d4ff; color: #000; }
+        .btn-gray { background: #30363d; color: #fff; margin-left: 10px; }
+        .success {
+            background: #1b2d1b; color: #3fb950;
+            padding: 10px; border-radius: 6px; margin-bottom: 16px; font-size: 13px;
+        }
+        .error {
+            background: #2d1b1b; color: #f85149;
+            padding: 10px; border-radius: 6px; margin-bottom: 16px; font-size: 13px;
+        }
+        .camera-box {
+            background: #0d1117; border: 1px solid #30363d;
+            border-radius: 8px; padding: 16px; margin-bottom: 16px; text-align: center;
+        }
+        #video { width: 100%; border-radius: 8px; display: none; }
+        #canvas { display: none; }
+        .btn-green { background: #3fb950; color: #fff; margin-top: 10px; }
+        .capture-count { color: #00d4ff; font-size: 13px; margin-top: 8px; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>🎭 FACE RECOGNITION</h2>
+        <a href="/dashboard">📊 Dashboard</a>
+        <a href="/persons">👤 All Persons</a>
+        <a href="/attendance">✅ Attendance Log</a>
+        <a href="/register" class="active">➕ Register Person</a>
+        <a href="/camera">📷 Start Camera</a>
+        <a href="/logout">🚪 Logout</a>
+    </div>
+    <div class="main">
+        <h1>➕ Register New Person</h1>
+        {% if success %}
+        <div class="success">✅ {{ success }}</div>
+        {% endif %}
+        {% if error %}
+        <div class="error">❌ {{ error }}</div>
+        {% endif %}
+        <div class="form-box">
+            <form method="POST" id="registerForm">
+                <label>Full Name *</label>
+                <input type="text" name="name" required placeholder="Enter full name">
+                <label>Father Name</label>
+                <input type="text" name="father_name" placeholder="Enter father name">
+                <label>CNIC / ID *</label>
+                <input type="text" name="cnic" required placeholder="Enter CNIC">
+                <label>Department</label>
+                <input type="text" name="department" placeholder="e.g. IT, CS">
+                <label>Semester</label>
+                <input type="text" name="semester" placeholder="e.g. 1st, 2nd">
+                <label>Phone</label>
+                <input type="text" name="phone" placeholder="Enter phone number">
+                <label>Address</label>
+                <textarea name="address" rows="2" placeholder="Enter address"></textarea>
+
+                <div class="camera-box">
+                    <video id="video" autoplay></video>
+                    <canvas id="canvas" width="320" height="240"></canvas>
+                    <br>
+                    <button type="button" class="btn btn-cyan" onclick="startCamera()">📷 Start Camera</button>
+                    <button type="button" class="btn btn-green" onclick="capturePhotos()" id="captureBtn" style="display:none">📸 Capture 30 Photos</button>
+                    <div class="capture-count" id="captureCount"></div>
+                    <input type="hidden" name="photos" id="photosData">
+                </div>
+
+                <button type="submit" class="btn btn-cyan">✅ Register Person</button>
+                <a href="/dashboard" class="btn btn-gray">Cancel</a>
+            </form>
+        </div>
+    </div>
+    <script>
+        let stream = null;
+        let photos = [];
+
+        async function startCamera() {
+            stream = await navigator.mediaDevices.getUserMedia({video: true});
+            document.getElementById('video').style.display = 'block';
+            document.getElementById('video').srcObject = stream;
+            document.getElementById('captureBtn').style.display = 'inline-block';
+        }
+
+        async function capturePhotos() {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            photos = [];
+            document.getElementById('captureCount').textContent = 'Capturi

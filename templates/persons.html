@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Persons - Face Recognition AI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0d1117; font-family: 'Segoe UI', sans-serif; color: #e6edf3; }
+        .sidebar {
+            width: 200px; background: #161b22; height: 100vh;
+            position: fixed; padding: 20px 0; border-right: 1px solid #30363d;
+        }
+        .sidebar h2 { color: #00d4ff; padding: 0 20px; font-size: 14px; margin-bottom: 24px; }
+        .sidebar a {
+            display: block; padding: 12px 20px; color: #8b949e;
+            text-decoration: none; font-size: 14px;
+        }
+        .sidebar a:hover, .sidebar a.active { color: #00d4ff; background: #0d1117; }
+        .main { margin-left: 200px; padding: 30px; }
+        h1 { font-size: 24px; margin-bottom: 24px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+        .card {
+            background: #161b22; border-radius: 10px; padding: 20px;
+            border: 1px solid #30363d; text-align: center;
+        }
+        .card:hover { border-color: #00d4ff; }
+        .avatar {
+            width: 64px; height: 64px; border-radius: 50%;
+            background: #00d4ff; color: #000; font-size: 24px;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 12px;
+        }
+        .name { font-size: 15px; font-weight: bold; margin-bottom: 4px; }
+        .info { color: #8b949e; font-size: 12px; margin-bottom: 2px; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>🎭 FACE RECOGNITION</h2>
+        <a href="/dashboard">📊 Dashboard</a>
+        <a href="/persons" class="active">👤 All Persons</a>
+        <a href="/attendance">✅ Attendance Log</a>
+        <a href="/register">➕ Register Person</a>
+        <a href="/camera">📷 Start Camera</a>
+        <a href="/logout">🚪 Logout</a>
+    </div>
+    <div class="main">
+        <h1>👤 All Persons</h1>
+        <div class="grid">
+            {% for person in persons %}
+            <div class="card">
+                <div class="avatar">{{ person.name[0].upper() }}</div>
+                <div class="name">{{ person.name }}</div>
+                <div class="info">{{ person.department }}</div>
+                <div class="info">Semester: {{ person.semester }}</div>
+                <div class="info">CNIC: {{ person.cnic }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

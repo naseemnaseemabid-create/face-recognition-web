@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Recognition AI - Login</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0d1117;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .login-box {
+            background: #161b22;
+            padding: 40px;
+            border-radius: 12px;
+            width: 380px;
+            border: 1px solid #30363d;
+        }
+        h1 { color: #00d4ff; font-size: 22px; margin-bottom: 8px; }
+        p { color: #8b949e; font-size: 13px; margin-bottom: 28px; }
+        label { color: #8b949e; font-size: 13px; display: block; margin-bottom: 6px; }
+        input {
+            width: 100%;
+            padding: 10px 14px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #e6edf3;
+            font-size: 14px;
+            margin-bottom: 18px;
+        }
+        input:focus { outline: none; border-color: #00d4ff; }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #00d4ff;
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover { background: #00b8d9; }
+        .error {
+            background: #2d1b1b;
+            color: #f85149;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h1>🎭 Face Recognition AI</h1>
+        <p>Login to access the system</p>
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+        <form method="POST">
+            <label>Username</label>
+            <input type="text" name="username" placeholder="admin" required>
+            <label>Password</label>
+            <input type="password" name="password" placeholder="••••••••" required>
+            <button type="submit">Login →</button>
+        </form>
+    </div>
+</body>
+</html>

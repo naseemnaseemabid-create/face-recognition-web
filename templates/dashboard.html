@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Face Recognition AI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0d1117; font-family: 'Segoe UI', sans-serif; color: #e6edf3; }
+        .sidebar {
+            width: 200px; background: #161b22; height: 100vh;
+            position: fixed; padding: 20px 0; border-right: 1px solid #30363d;
+        }
+        .sidebar h2 { color: #00d4ff; padding: 0 20px; font-size: 14px; margin-bottom: 24px; }
+        .sidebar a {
+            display: block; padding: 12px 20px; color: #8b949e;
+            text-decoration: none; font-size: 14px;
+        }
+        .sidebar a:hover, .sidebar a.active { color: #00d4ff; background: #0d1117; }
+        .main { margin-left: 200px; padding: 30px; }
+        h1 { font-size: 24px; margin-bottom: 6px; }
+        .date { color: #8b949e; font-size: 13px; margin-bottom: 24px; }
+        .cards { display: flex; gap: 16px; margin-bottom: 30px; }
+        .card {
+            background: #161b22; border-radius: 10px; padding: 24px;
+            flex: 1; border: 1px solid #30363d; text-align: center;
+        }
+        .card .icon { font-size: 32px; margin-bottom: 8px; }
+        .card .value { font-size: 28px; font-weight: bold; }
+        .card .label { color: #8b949e; font-size: 13px; margin-top: 4px; }
+        .actions { display: flex; gap: 12px; margin-bottom: 30px; }
+        .btn {
+            padding: 12px 24px; border-radius: 8px; border: none;
+            font-size: 14px; font-weight: bold; cursor: pointer; text-decoration: none;
+        }
+        .btn-cyan { background: #00d4ff; color: #000; }
+        .btn-purple { background: #7c3aed; color: #fff; }
+        .btn-green { background: #3fb950; color: #fff; }
+        table { width: 100%; border-collapse: collapse; background: #161b22; border-radius: 10px; overflow: hidden; }
+        th { background: #1f2937; padding: 12px; text-align: left; color: #8b949e; font-size: 13px; }
+        td { padding: 10px 12px; font-size: 13px; border-bottom: 1px solid #30363d; }
+        tr:last-child td { border-bottom: none; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>🎭 FACE RECOGNITION</h2>
+        <a href="/dashboard" class="active">📊 Dashboard</a>
+        <a href="/persons">👤 All Persons</a>
+        <a href="/attendance">✅ Attendance Log</a>
+        <a href="/register">➕ Register Person</a>
+        <a href="/camera">📷 Start Camera</a>
+        <a href="/logout">🚪 Logout</a>
+    </div>
+    <div class="main">
+        <h1>Dashboard Overview</h1>
+        <div class="date" id="datetime"></div>
+        <div class="cards">
+            <div class="card" style="border-color: #00d4ff;">
+                <div class="icon">👤</div>
+                <div class="value" style="color: #00d4ff;">{{ stats.persons }}</div>
+                <div class="label">Registered Persons</div>
+            </div>
+            <div class="card" style="border-color: #3fb950;">
+                <div class="icon">✅</div>
+                <div class="value" style="color: #3fb950;">{{ stats.today }}</div>
+                <div class="label">Attendance Today</div>
+            </div>
+            <div class="card" style="border-color: #f0883e;">
+                <div class="icon">🧠</div>
+                <div class="value" style="color: #f0883e;">Ready ✓</div>
+                <div class="label">Model Status</div>
+            </div>
+        </div>
+        <div class="actions">
+            <a href="/register" class="btn btn-cyan">➕ Register Person</a>
+            <a href="/camera" class="btn btn-purple">📷 Start Camera</a>
+            <a href="/attendance" class="btn btn-green">✅ Attendance Log</a>
+        </div>
+        <h2 style="margin-bottom: 12px;">Recent Attendance</h2>
+        <table>
+            <tr>
+                <th>Name</th><th>Department</th><th>Semester</th><th>Confidence</th><th>Time</th>
+            </tr>
+            {% for log in stats.recent %}
+            <tr>
+                <td>{{ log.person_name }}</td>
+                <td>{{ log.department }}</td>
+                <td>{{ log.semester }}</td>
+                <td>{{ "%.1f"|format(log.confidence or 0) }}%</td>
+                <td>{{ log.timestamp[:16] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <script>
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('datetime').textContent = now.toLocaleString();
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+    </script>
+</body>
+</html>
