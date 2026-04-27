@@ -7,44 +7,54 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #0d1117; font-family: 'Segoe UI', sans-serif; color: #e6edf3; }
+        .navbar {
+            background: #161b22; padding: 14px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #30363d; position: sticky; top: 0; z-index: 100;
+        }
+        .navbar h2 { color: #00d4ff; font-size: 16px; }
+        .menu-btn { display: none; background: none; border: none; color: #e6edf3; font-size: 24px; cursor: pointer; }
         .sidebar {
             width: 200px; background: #161b22; height: 100vh;
-            position: fixed; padding: 20px 0; border-right: 1px solid #30363d;
+            position: fixed; top: 0; left: 0; padding: 20px 0;
+            border-right: 1px solid #30363d; z-index: 99; transition: transform 0.3s;
         }
         .sidebar h2 { color: #00d4ff; padding: 0 20px; font-size: 14px; margin-bottom: 24px; }
-        .sidebar a {
-            display: block; padding: 12px 20px; color: #8b949e;
-            text-decoration: none; font-size: 14px;
-        }
+        .sidebar a { display: block; padding: 12px 20px; color: #8b949e; text-decoration: none; font-size: 14px; }
         .sidebar a:hover, .sidebar a.active { color: #00d4ff; background: #0d1117; }
+        .sidebar .close-btn { display: none; position: absolute; top: 10px; right: 10px; background: none; border: none; color: #e6edf3; font-size: 20px; cursor: pointer; }
         .main { margin-left: 200px; padding: 30px; }
         h1 { font-size: 24px; margin-bottom: 24px; }
         .train-box {
             background: #161b22; border-radius: 10px;
-            padding: 30px; max-width: 500px; border: 1px solid #30363d;
-            text-align: center;
+            padding: 30px; max-width: 500px; border: 1px solid #30363d; text-align: center;
         }
         .icon { font-size: 64px; margin-bottom: 16px; }
-        p { color: #8b949e; font-size: 14px; margin-bottom: 24px; }
-        .btn {
-            padding: 14px 32px; border-radius: 8px; border: none;
-            font-size: 15px; font-weight: bold; cursor: pointer;
-        }
+        p { color: #8b949e; font-size: 14px; margin-bottom: 24px; line-height: 1.6; }
+        .btn { padding: 14px 32px; border-radius: 8px; border: none; font-size: 15px; font-weight: bold; cursor: pointer; }
         .btn-purple { background: #7c3aed; color: #fff; }
         .btn-purple:hover { background: #6d28d9; }
-        .success {
-            background: #1b2d1b; color: #3fb950;
-            padding: 12px; border-radius: 6px; margin-top: 20px; font-size: 14px;
-        }
-        .error {
-            background: #2d1b1b; color: #f85149;
-            padding: 12px; border-radius: 6px; margin-top: 20px; font-size: 14px;
-        }
+        .success { background: #1b2d1b; color: #3fb950; padding: 12px; border-radius: 6px; margin-top: 20px; font-size: 14px; }
+        .error { background: #2d1b1b; color: #f85149; padding: 12px; border-radius: 6px; margin-top: 20px; font-size: 14px; }
         .loading { color: #00d4ff; margin-top: 16px; font-size: 14px; display: none; }
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar .close-btn { display: block; }
+            .menu-btn { display: block; }
+            .main { margin-left: 0; padding: 16px; }
+            h1 { font-size: 20px; }
+            .train-box { padding: 20px; }
+        }
     </style>
 </head>
 <body>
-    <div class="sidebar">
+    <div class="navbar">
+        <h2>🎭 FACE RECOGNITION</h2>
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    </div>
+    <div class="sidebar" id="sidebar">
+        <button class="close-btn" onclick="toggleMenu()">✕</button>
         <h2>🎭 FACE RECOGNITION</h2>
         <a href="/dashboard">📊 Dashboard</a>
         <a href="/persons">👤 All Persons</a>
@@ -58,7 +68,7 @@
         <h1>🧠 Train Model</h1>
         <div class="train-box">
             <div class="icon">🧠</div>
-            <p>Click the button below to train the AI model with all registered face images. This may take a few minutes.</p>
+            <p>Click the button below to train the AI model with all registered face images. This may take a few minutes depending on the number of persons.</p>
             {% if result %}
                 {% if result.success %}
                 <div class="success">✅ {{ result.message }}</div>
@@ -75,6 +85,9 @@
     <script>
         function showLoading() {
             document.getElementById('loading').style.display = 'block';
+        }
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('open');
         }
     </script>
 </body>

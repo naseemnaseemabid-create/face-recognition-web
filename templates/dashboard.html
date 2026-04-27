@@ -7,9 +7,25 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #0d1117; font-family: 'Segoe UI', sans-serif; color: #e6edf3; }
+
+        /* Navbar */
+        .navbar {
+            background: #161b22; padding: 14px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #30363d; position: sticky; top: 0; z-index: 100;
+        }
+        .navbar h2 { color: #00d4ff; font-size: 16px; }
+        .menu-btn {
+            display: none; background: none; border: none;
+            color: #e6edf3; font-size: 24px; cursor: pointer;
+        }
+
+        /* Sidebar */
         .sidebar {
             width: 200px; background: #161b22; height: 100vh;
-            position: fixed; padding: 20px 0; border-right: 1px solid #30363d;
+            position: fixed; top: 0; left: 0; padding: 20px 0;
+            border-right: 1px solid #30363d; z-index: 99;
+            transition: transform 0.3s;
         }
         .sidebar h2 { color: #00d4ff; padding: 0 20px; font-size: 14px; margin-bottom: 24px; }
         .sidebar a {
@@ -17,81 +33,123 @@
             text-decoration: none; font-size: 14px;
         }
         .sidebar a:hover, .sidebar a.active { color: #00d4ff; background: #0d1117; }
+        .sidebar .close-btn {
+            display: none; position: absolute; top: 10px; right: 10px;
+            background: none; border: none; color: #e6edf3;
+            font-size: 20px; cursor: pointer;
+        }
+
+        /* Main */
         .main { margin-left: 200px; padding: 30px; }
         h1 { font-size: 24px; margin-bottom: 6px; }
         .date { color: #8b949e; font-size: 13px; margin-bottom: 24px; }
-        .cards { display: flex; gap: 16px; margin-bottom: 30px; }
+
+        /* Cards */
+        .cards { display: flex; gap: 16px; margin-bottom: 30px; flex-wrap: wrap; }
         .card {
             background: #161b22; border-radius: 10px; padding: 24px;
-            flex: 1; border: 1px solid #30363d; text-align: center;
+            flex: 1; min-width: 140px; border: 1px solid #30363d; text-align: center;
         }
         .card .icon { font-size: 32px; margin-bottom: 8px; }
         .card .value { font-size: 28px; font-weight: bold; }
         .card .label { color: #8b949e; font-size: 13px; margin-top: 4px; }
-        .actions { display: flex; gap: 12px; margin-bottom: 30px; }
+
+        /* Actions */
+        .actions { display: flex; gap: 12px; margin-bottom: 30px; flex-wrap: wrap; }
         .btn {
-            padding: 12px 24px; border-radius: 8px; border: none;
-            font-size: 14px; font-weight: bold; cursor: pointer; text-decoration: none;
+            padding: 12px 20px; border-radius: 8px; border: none;
+            font-size: 14px; font-weight: bold; cursor: pointer;
+            text-decoration: none; display: inline-block;
         }
         .btn-cyan { background: #00d4ff; color: #000; }
         .btn-purple { background: #7c3aed; color: #fff; }
         .btn-green { background: #3fb950; color: #fff; }
-        table { width: 100%; border-collapse: collapse; background: #161b22; border-radius: 10px; overflow: hidden; }
+
+        /* Table */
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; background: #161b22; border-radius: 10px; overflow: hidden; min-width: 400px; }
         th { background: #1f2937; padding: 12px; text-align: left; color: #8b949e; font-size: 13px; }
         td { padding: 10px 12px; font-size: 13px; border-bottom: 1px solid #30363d; }
         tr:last-child td { border-bottom: none; }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar .close-btn { display: block; }
+            .menu-btn { display: block; }
+            .main { margin-left: 0; padding: 16px; }
+            .navbar { display: flex; }
+            h1 { font-size: 20px; }
+            .card { min-width: 120px; padding: 16px; }
+            .card .value { font-size: 22px; }
+            .btn { padding: 10px 14px; font-size: 13px; }
+        }
     </style>
 </head>
 <body>
-    <div class="sidebar">
+    <!-- Navbar (mobile) -->
+    <div class="navbar">
+        <h2>🎭 FACE RECOGNITION</h2>
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <button class="close-btn" onclick="toggleMenu()">✕</button>
         <h2>🎭 FACE RECOGNITION</h2>
         <a href="/dashboard" class="active">📊 Dashboard</a>
         <a href="/persons">👤 All Persons</a>
         <a href="/attendance">✅ Attendance Log</a>
         <a href="/register">➕ Register Person</a>
+        <a href="/train">🧠 Train Model</a>
         <a href="/camera">📷 Start Camera</a>
         <a href="/logout">🚪 Logout</a>
     </div>
+
+    <!-- Main -->
     <div class="main">
         <h1>Dashboard Overview</h1>
         <div class="date" id="datetime"></div>
         <div class="cards">
-            <div class="card" style="border-color: #00d4ff;">
+            <div class="card" style="border-color:#00d4ff;">
                 <div class="icon">👤</div>
-                <div class="value" style="color: #00d4ff;">{{ stats.persons }}</div>
+                <div class="value" style="color:#00d4ff;">{{ stats.persons }}</div>
                 <div class="label">Registered Persons</div>
             </div>
-            <div class="card" style="border-color: #3fb950;">
+            <div class="card" style="border-color:#3fb950;">
                 <div class="icon">✅</div>
-                <div class="value" style="color: #3fb950;">{{ stats.today }}</div>
+                <div class="value" style="color:#3fb950;">{{ stats.today }}</div>
                 <div class="label">Attendance Today</div>
             </div>
-            <div class="card" style="border-color: #f0883e;">
+            <div class="card" style="border-color:#f0883e;">
                 <div class="icon">🧠</div>
-                <div class="value" style="color: #f0883e;">Ready ✓</div>
+                <div class="value" style="color:#f0883e;">Ready ✓</div>
                 <div class="label">Model Status</div>
             </div>
         </div>
         <div class="actions">
             <a href="/register" class="btn btn-cyan">➕ Register Person</a>
-            <a href="/camera" class="btn btn-purple">📷 Start Camera</a>
-            <a href="/attendance" class="btn btn-green">✅ Attendance Log</a>
+            <a href="/train" class="btn btn-purple">🧠 Train Model</a>
+            <a href="/camera" class="btn btn-green">📷 Start Camera</a>
         </div>
-        <h2 style="margin-bottom: 12px;">Recent Attendance</h2>
-        <table>
-            <tr>
-                <th>Name</th><th>Department</th><th>Semester</th><th>Confidence</th><th>Time</th>
-            </tr>
-            {% for log in stats.recent %}
-            <tr>
-                <td>{{ log.person_name }}</td>
-                <td>{{ log.department }}</td>
-                <td>{{ log.semester }}</td>
-                <td>{{ "%.1f"|format(log.confidence or 0) }}%</td>
-                <td>{{ log.timestamp[:16] }}</td>
-            </tr>
-            {% endfor %}
-        </table>
+        <h2 style="margin-bottom:12px;">Recent Attendance</h2>
+        <div class="table-wrap">
+            <table>
+                <tr>
+                    <th>Name</th><th>Department</th><th>Semester</th><th>Confidence</th><th>Time</th>
+                </tr>
+                {% for log in stats.recent %}
+                <tr>
+                    <td>{{ log.person_name }}</td>
+                    <td>{{ log.department }}</td>
+                    <td>{{ log.semester }}</td>
+                    <td>{{ "%.1f"|format(log.confidence or 0) }}%</td>
+                    <td>{{ log.timestamp[:16] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
     </div>
     <script>
         function updateTime() {
@@ -100,6 +158,10 @@
         }
         updateTime();
         setInterval(updateTime, 1000);
+
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
     </script>
 </body>
 </html>
