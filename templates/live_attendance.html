@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Attendance - Face Recognition AI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0d1117; font-family: 'Segoe UI', sans-serif; color: #e6edf3; }
+        
+        /* Navbar */
+        .navbar {
+            background: #161b22; padding: 14px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #30363d; position: sticky; top: 0; z-index: 100;
+        }
+        .navbar h2 { color: #00d4ff; font-size: 16px; }
+        .menu-btn { display: none; background: none; border: none; color: #e6edf3; font-size: 24px; cursor: pointer; }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 220px; background: #161b22; height: 100vh;
+            position: fixed; top: 0; left: 0; padding: 20px 0;
+            border-right: 1px solid #30363d; z-index: 99; transition: transform 0.3s;
+            overflow-y: auto;
+        }
+        .sidebar h2 { color: #00d4ff; padding: 0 20px; font-size: 16px; margin-bottom: 24px; }
+        .sidebar a { 
+            display: block; padding: 12px 20px; color: #8b949e; 
+            text-decoration: none; font-size: 14px; transition: all 0.3s;
+        }
+        .sidebar a:hover, .sidebar a.active { 
+            color: #00d4ff; background: #0d1117; 
+            border-left: 3px solid #00d4ff;
+        }
+        .sidebar .close-btn { 
+            display: none; position: absolute; top: 10px; right: 10px; 
+            background: none; border: none; color: #e6edf3; font-size: 20px; cursor: pointer; 
+        }
+        .sidebar-footer {
+            position: absolute; bottom: 20px; left: 0; right: 0;
+            padding: 20px 20px 0 20px;
+            border-top: 1px solid #30363d;
+            margin-top: 20px;
+        }
+        .sidebar-footer a {
+            color: #f85149 !important;
+        }
+        
+        /* Main */
+        .main { margin-left: 220px; padding: 30px; }
+        h1 { font-size: 28px; margin-bottom: 8px; }
+        .subtitle { color: #8b949e; font-size: 14px; margin-bottom: 24px; }
+        
+        /* Content */
+        .content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+        }
+        
+        /* Camera Section */
+        .camera-section {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .camera-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #00d4ff;
+        }
+        #video {
+            width: 100%;
+            border-radius: 10px;
+            background: #000;
+            border: 2px solid #30363d;
+        }
+        .controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .subject-select {
+            flex: 1;
+            padding: 10px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #e6edf3;
+            font-size: 14px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-start {
+            background: #3fb950;
+            color: #fff;
+        }
+        .btn-start:hover {
+            background: #2ea043;
+            transform: translateY(-2px);
+        }
+        .btn-stop {
+            background: #f85149;
+            color: #fff;
+        }
+        .btn-stop:hover {
+            background: #da3633;
+            transform: translateY(-2px);
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-running {
+            background: #0a2b1e;
+            color: #3fb950;
+            border: 1px solid #2ea043;
+        }
+        .status-stopped {
+            background: #2d1b1b;
+            color: #f85149;
+            border: 1px solid #da3633;
+        }
+        
+        /* Log Section */
+        .log-section {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 20px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+        .log-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #00d4ff;
+        }
+        .attendance-log {
+            flex: 1;
+            overflow-y: auto;
+            background: #0d1117;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        .log-item {
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px;
+            animation: slideIn 0.3s ease;
+            font-size: 13px;
+        }
+        .log-success {
+            background: #0a2b1e;
+            color: #3fb950;
+            border-left: 3px solid #3fb950;
+        }
+        .log-error {
+            background: #2d1b1b;
+            color: #f85149;
+            border-left: 3px solid #f85149;
+        }
+        .log-info {
+            background: #1b2d3b;
+            color: #79c0ff;
+            border-left: 3px solid #79c0ff;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        /* Flash Message */
+        .flash-success {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #3fb950;
+            color: #fff;
+            padding: 20px 40px;
+            border-radius: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            z-index: 1000;
+            animation: fadeOut 1.5s ease-out;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: translate(-50%, -50%); }
+            70% { opacity: 1; }
+            100% { opacity: 0; transform: translate(-50%, -60%); display: none; }
+        }
+        
+        /* Mobile */
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar .close-btn { display: block; }
+            .menu-btn { display: block; }
+            .main { margin-left: 0; padding: 16px; }
+            .content { grid-template-columns: 1fr; }
+            h1 { font-size: 22px; }
+            .log-section { height: 350px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar (mobile) -->
+    <div class="navbar">
+        <h2>🎭 FACE RECOGNITION AI</h2>
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <button class="close-btn" onclick="toggleMenu()">✕</button>
+        <h2>🎭 FACE RECOGNITION</h2>
+        <a href="/dashboard">📊 Dashboard</a>
+        <a href="/students">👨‍🎓 Students</a>
+        <a href="/teachers">👨‍🏫 Teachers</a>
+        <a href="/subjects">📖 Subjects</a>
+        <a href="/attendance/mark">✅ Mark Attendance</a>
+        <a href="/attendance/live" class="active">🎥 Live Recognition</a>
+        <a href="/attendance/report">📊 Reports</a>
+        <a href="/train">🧠 Train Model</a>
+        <a href="/persons">👥 All Persons</a>
+        <div class="sidebar-footer">
+            <a href="/logout">🚪 Logout</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+        <h1>🎥 Live Face Recognition Attendance</h1>
+        <p class="subtitle">Teacher: {{ user.name }} | {{ user.department }}</p>
+        
+        <div class="content">
+            <!-- Camera Section -->
+            <div class="camera-section">
+                <div class="camera-title">📷 Camera Feed</div>
+                <video id="video" autoplay playsinline></video>
+                <canvas id="canvas" style="display:none;"></canvas>
+                <div class="controls">
+                    <select id="subjectSelect" class="subject-select">
+                        <option value="">-- Select Subject --</option>
+                        {% for subject in subjects %}
+                        <option value="{{ subject[0] }}">{{ subject[2] }} ({{ subject[3] }})</option>
+                        {% endfor %}
+                    </select>
+                    <button id="startBtn" class="btn btn-start">▶ Start Camera</button>
+                    <button id="stopBtn" class="btn btn-stop">⏹ Stop Camera</button>
+                    <span id="status" class="status status-stopped">Stopped</span>
+                </div>
+            </div>
+            
+            <!-- Log Section -->
+            <div class="log-section">
+                <div class="log-title">📝 Attendance Log</div>
+                <div id="attendanceLog" class="attendance-log">
+                    <div class="log-item log-info">✓ Ready to start. Select a subject and start camera.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let video = document.getElementById('video');
+        let canvas = document.getElementById('canvas');
+        let context = canvas.getContext('2d');
+        let stream = null;
+        let recognitionInterval = null;
+        let isRunning = false;
+        
+        function addLog(message, type = 'info') {
+            const logDiv = document.getElementById('attendanceLog');
+            const logItem = document.createElement('div');
+            logItem.className = `log-item log-${type}`;
+            logItem.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
+            logDiv.appendChild(logItem);
+            logDiv.scrollTop = logDiv.scrollHeight;
+            
+            // Keep only last 100 logs
+            while (logDiv.children.length > 100) {
+                logDiv.removeChild(logDiv.firstChild);
+            }
+        }
+        
+        function flashSuccess(studentName) {
+            const flash = document.createElement('div');
+            flash.className = 'flash-success';
+            flash.textContent = `✓ ${studentName}`;
+            document.body.appendChild(flash);
+            setTimeout(() => flash.remove(), 1500);
+        }
+        
+        async function startCamera() {
+            const subjectId = document.getElementById('subjectSelect').value;
+            if (!subjectId) {
+                addLog('Please select a subject first!', 'error');
+                return;
+            }
+            
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' }
+                });
+                video.srcObject = stream;
+                await video.play();
+                
+                isRunning = true;
+                document.getElementById('status').className = 'status status-running';
+                document.getElementById('status').textContent = 'Running';
+                addLog('✅ Camera started successfully', 'success');
+                
+                // Start recognition every 2 seconds
+                recognitionInterval = setInterval(recognizeFace, 2000);
+            } catch (error) {
+                addLog('❌ Camera error: ' + error.message, 'error');
+            }
+        }
+        
+        function stopCamera() {
+            if (recognitionInterval) {
+                clearInterval(recognitionInterval);
+            }
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                video.srcObject = null;
+            }
+            isRunning = false;
+            document.getElementById('status').className = 'status status-stopped';
+            document.getElementById('status').textContent = 'Stopped';
+            addLog('⏹ Camera stopped', 'info');
+        }
+        
+        async function recognizeFace() {
+            if (!isRunning) return;
+            
+            const subjectId = document.getElementById('subjectSelect').value;
+            if (!subjectId) {
+                addLog('⚠ Please select a subject first', 'error');
+                stopCamera();
+                return;
+            }
+            
+            // Capture frame
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Get image data
+            const imageData = canvas.toDataURL('image/jpeg', 0.8);
+            
+            try {
+                const response = await fetch('/api/recognize-attendance', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: imageData, subject_id: subjectId })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    addLog(`✓ ${result.student_name} (Roll: ${result.roll_number}) - ${result.message} (${result.confidence.toFixed(1)}% confidence)`, 'success');
+                    flashSuccess(result.student_name);
+                } else if (result.message && !result.message.includes('No face')) {
+                    if (!result.message.includes('already marked')) {
+                        addLog(`⚠ ${result.message}`, 'error');
+                    }
+                }
+            } catch (error) {
+                console.error('Recognition error:', error);
+            }
+        }
+        
+        // Event listeners
+        document.getElementById('startBtn').onclick = startCamera;
+        document.getElementById('stopBtn').onclick = stopCamera;
+        
+        // Cleanup on page unload
+        window.onbeforeunload = function() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+        };
+        
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+        
+        // Close sidebar on link click (mobile)
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    document.getElementById('sidebar').classList.remove('open');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

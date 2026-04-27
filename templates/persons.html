@@ -7,6 +7,8 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #0d1117; font-family: 'Segoe UI', sans-serif; color: #e6edf3; }
+        
+        /* Navbar */
         .navbar {
             background: #161b22; padding: 14px 20px;
             display: flex; justify-content: space-between; align-items: center;
@@ -14,81 +16,287 @@
         }
         .navbar h2 { color: #00d4ff; font-size: 16px; }
         .menu-btn { display: none; background: none; border: none; color: #e6edf3; font-size: 24px; cursor: pointer; }
+        
+        /* Sidebar */
         .sidebar {
-            width: 200px; background: #161b22; height: 100vh;
+            width: 220px; background: #161b22; height: 100vh;
             position: fixed; top: 0; left: 0; padding: 20px 0;
             border-right: 1px solid #30363d; z-index: 99; transition: transform 0.3s;
+            overflow-y: auto;
         }
-        .sidebar h2 { color: #00d4ff; padding: 0 20px; font-size: 14px; margin-bottom: 24px; }
-        .sidebar a { display: block; padding: 12px 20px; color: #8b949e; text-decoration: none; font-size: 14px; }
-        .sidebar a:hover, .sidebar a.active { color: #00d4ff; background: #0d1117; }
-        .sidebar .close-btn { display: none; position: absolute; top: 10px; right: 10px; background: none; border: none; color: #e6edf3; font-size: 20px; cursor: pointer; }
-        .main { margin-left: 200px; padding: 30px; }
-        h1 { font-size: 24px; margin-bottom: 24px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+        .sidebar h2 { color: #00d4ff; padding: 0 20px; font-size: 16px; margin-bottom: 24px; }
+        .sidebar a { 
+            display: block; padding: 12px 20px; color: #8b949e; 
+            text-decoration: none; font-size: 14px; transition: all 0.3s;
+        }
+        .sidebar a:hover, .sidebar a.active { 
+            color: #00d4ff; background: #0d1117; 
+            border-left: 3px solid #00d4ff;
+        }
+        .sidebar .close-btn { 
+            display: none; position: absolute; top: 10px; right: 10px; 
+            background: none; border: none; color: #e6edf3; font-size: 20px; cursor: pointer; 
+        }
+        .sidebar-footer {
+            position: absolute; bottom: 20px; left: 0; right: 0;
+            padding: 20px 20px 0 20px;
+            border-top: 1px solid #30363d;
+            margin-top: 20px;
+        }
+        .sidebar-footer a {
+            color: #f85149 !important;
+        }
+        
+        /* Main */
+        .main { margin-left: 220px; padding: 30px; }
+        h1 { font-size: 28px; margin-bottom: 8px; }
+        .subtitle { color: #8b949e; font-size: 14px; margin-bottom: 24px; }
+        
+        /* Stats Bar */
+        .stats-bar {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .stat-number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+        .stat-label {
+            color: #8b949e;
+            font-size: 13px;
+        }
+        .btn-add {
+            background: #00d4ff;
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn-add:hover {
+            background: #00b8d9;
+            transform: translateY(-2px);
+        }
+        
+        /* Grid */
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+            gap: 20px; 
+        }
         .card {
-            background: #161b22; border-radius: 10px; padding: 20px;
-            border: 1px solid #30363d; text-align: center; transition: border-color 0.2s;
+            background: #161b22; border-radius: 12px; 
+            border: 1px solid #30363d; 
+            transition: all 0.3s;
+            overflow: hidden;
         }
-        .card:hover { border-color: #00d4ff; }
+        .card:hover { 
+            border-color: #00d4ff; 
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        /* Card Header */
+        .card-header {
+            background: linear-gradient(135deg, #00d4ff20 0%, #7c3aed20 100%);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #30363d;
+        }
         .avatar {
-            width: 64px; height: 64px; border-radius: 50%;
-            background: #00d4ff; color: #000; font-size: 24px; font-weight: bold;
+            width: 70px; height: 70px; border-radius: 50%;
+            background: linear-gradient(135deg, #00d4ff, #7c3aed);
+            color: #fff;
+            font-size: 28px; font-weight: bold;
             display: flex; align-items: center; justify-content: center;
             margin: 0 auto 12px;
+            box-shadow: 0 4px 15px rgba(0,212,255,0.3);
         }
-        .name { font-size: 15px; font-weight: bold; margin-bottom: 6px; }
+        .name { 
+            font-size: 16px; 
+            font-weight: bold; 
+            margin-bottom: 4px;
+            color: #e6edf3;
+        }
+        .roll-number {
+            color: #00d4ff;
+            font-size: 12px;
+            font-family: monospace;
+        }
+        
+        /* Card Body */
+        .card-body {
+            padding: 15px;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+        .info-label {
+            color: #8b949e;
+        }
+        .info-value {
+            color: #e6edf3;
+            font-weight: 500;
+        }
         .badge {
-            display: inline-block; padding: 3px 10px; border-radius: 20px;
-            background: #1f2937; color: #00d4ff; font-size: 11px; margin-bottom: 4px;
+            display: inline-block; 
+            padding: 4px 12px; 
+            border-radius: 20px;
+            background: #1f2937; 
+            color: #00d4ff; 
+            font-size: 11px;
+            font-weight: bold;
         }
-        .info { color: #8b949e; font-size: 12px; margin-bottom: 2px; }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            background: #161b22;
+            border-radius: 12px;
+            border: 1px solid #30363d;
+        }
+        .empty-state .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        .empty-state h3 {
+            margin-bottom: 10px;
+        }
+        .empty-state p {
+            color: #8b949e;
+            margin-bottom: 20px;
+        }
+        
+        /* Mobile */
         @media (max-width: 768px) {
             .sidebar { transform: translateX(-100%); }
             .sidebar.open { transform: translateX(0); }
             .sidebar .close-btn { display: block; }
             .menu-btn { display: block; }
             .main { margin-left: 0; padding: 16px; }
-            h1 { font-size: 20px; }
-            .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+            h1 { font-size: 22px; }
+            .grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+            .stats-bar { flex-direction: column; align-items: stretch; }
+            .stat-item { justify-content: space-between; }
         }
     </style>
 </head>
 <body>
+    <!-- Navbar (mobile) -->
     <div class="navbar">
-        <h2>🎭 FACE RECOGNITION</h2>
+        <h2>🎭 FACE RECOGNITION AI</h2>
         <button class="menu-btn" onclick="toggleMenu()">☰</button>
     </div>
+
+    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <button class="close-btn" onclick="toggleMenu()">✕</button>
         <h2>🎭 FACE RECOGNITION</h2>
         <a href="/dashboard">📊 Dashboard</a>
-        <a href="/persons" class="active">👤 All Persons</a>
-        <a href="/attendance">✅ Attendance Log</a>
-        <a href="/register">➕ Register Person</a>
+        <a href="/students">👨‍🎓 Students</a>
+        <a href="/teachers">👨‍🏫 Teachers</a>
+        <a href="/subjects">📖 Subjects</a>
+        <a href="/attendance/mark">✅ Mark Attendance</a>
+        <a href="/attendance/live">🎥 Live Recognition</a>
+        <a href="/attendance/report">📊 Reports</a>
         <a href="/train">🧠 Train Model</a>
-        <a href="/camera">📷 Start Camera</a>
-        <a href="/logout">🚪 Logout</a>
+        <a href="/persons" class="active">👥 All Persons</a>
+        <div class="sidebar-footer">
+            <a href="/logout">🚪 Logout</a>
+        </div>
     </div>
+
+    <!-- Main Content -->
     <div class="main">
-        <h1>👤 All Persons</h1>
+        <h1>👥 All Registered Persons</h1>
+        <p class="subtitle">Manage and view all registered students in the system</p>
+        
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-number">{{ persons|length }}</div>
+                <div class="stat-label">Total Persons</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">{{ persons|selectattr('face_encoding')|list|length }}</div>
+                <div class="stat-label">Face Captured</div>
+            </div>
+            <a href="/student/register" class="btn-add">➕ Add New Person</a>
+        </div>
+        
+        {% if persons %}
         <div class="grid">
             {% for person in persons %}
             <div class="card">
-                <div class="avatar">{{ person.name[0].upper() if person.name else '?' }}</div>
-                <div class="name">{{ person.name }}</div>
-                <div class="badge">{{ person.department or 'N/A' }}</div>
-                <div class="info">Semester: {{ person.semester or '—' }}</div>
-                <div class="info">CNIC: {{ person.cnic or '—' }}</div>
-                <div class="info">📞 {{ person.phone or '—' }}</div>
+                <div class="card-header">
+                    <div class="avatar">{{ person[2][0].upper() if person[2] else '?' }}</div>
+                    <div class="name">{{ person[2] }}</div>
+                    <div class="roll-number">Roll: {{ person[3] }}</div>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <span class="info-label">📚 Class</span>
+                        <span class="info-value">{{ person[4] or '—' }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">📧 Email</span>
+                        <span class="info-value">{{ person[5] or '—' }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">📞 Phone</span>
+                        <span class="info-value">{{ person[6] or '—' }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">🆔 ID</span>
+                        <span class="info-value">{{ person[1] }}</span>
+                    </div>
+                </div>
             </div>
             {% endfor %}
         </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="icon">👥</div>
+            <h3>No Persons Found</h3>
+            <p>Start by registering a new person to the system.</p>
+            <a href="/student/register" class="btn-add" style="display: inline-block;">➕ Register New Person</a>
+        </div>
+        {% endif %}
     </div>
+
     <script>
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('open');
         }
+        
+        // Close sidebar on link click (mobile)
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    document.getElementById('sidebar').classList.remove('open');
+                }
+            });
+        });
     </script>
 </body>
 </html>

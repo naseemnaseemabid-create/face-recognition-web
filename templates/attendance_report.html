@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Report - Face Recognition AI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0d1117; font-family: 'Segoe UI', sans-serif; color: #e6edf3; }
+
+        .navbar {
+            background: #161b22; padding: 14px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #30363d;
+        }
+        .navbar h2 { color: #00d4ff; font-size: 16px; }
+        .menu-btn { display: none; background: none; border: none; color: #e6edf3; font-size: 24px; cursor: pointer; }
+
+        .sidebar {
+            width: 220px; background: #161b22; height: 100vh;
+            position: fixed; top: 0; left: 0; padding: 20px 0;
+            border-right: 1px solid #30363d;
+        }
+        .sidebar h2 { color: #00d4ff; padding: 0 20px; font-size: 16px; margin-bottom: 24px; }
+        .sidebar a {
+            display: block; padding: 12px 20px; color: #8b949e;
+            text-decoration: none; font-size: 14px;
+        }
+        .sidebar a:hover { color: #00d4ff; background: #0d1117; }
+        
+        .main { margin-left: 220px; padding: 30px; }
+        h1 { font-size: 24px; margin-bottom: 20px; }
+        
+        .filters {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .filter-group {
+            flex: 1;
+            min-width: 150px;
+        }
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #8b949e;
+            font-size: 12px;
+        }
+        select, input {
+            width: 100%;
+            padding: 8px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #e6edf3;
+        }
+        .btn {
+            padding: 8px 20px;
+            background: #00d4ff;
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            align-self: flex-end;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #161b22;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        th {
+            background: #1f2937;
+            padding: 12px;
+            text-align: left;
+            color: #8b949e;
+        }
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #30363d;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .menu-btn { display: block; }
+            .main { margin-left: 0; padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎭 FACE RECOGNITION</h2>
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <h2>🎭 FACE RECOGNITION</h2>
+        <a href="/dashboard">📊 Dashboard</a>
+        <a href="/students">👨‍🎓 Students</a>
+        <a href="/teachers">👨‍🏫 Teachers</a>
+        <a href="/subjects">📖 Subjects</a>
+        <a href="/attendance/mark">✅ Mark Attendance</a>
+        <a href="/attendance/live">🎥 Live Recognition</a>
+        <a href="/attendance/report" class="active">📊 Reports</a>
+        <a href="/train">🧠 Train Model</a>
+        <a href="/logout">🚪 Logout</a>
+    </div>
+
+    <div class="main">
+        <h1>📊 Attendance Reports</h1>
+        
+        <div class="filters">
+            <div class="filter-group">
+                <label>Subject</label>
+                <select id="subjectFilter">
+                    <option value="all">All Subjects</option>
+                    {% for subject in subjects %}
+                    <option value="{{ subject[0] }}">{{ subject[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Class</label>
+                <select id="classFilter">
+                    <option value="all">All Classes</option>
+                    {% for class in classes %}
+                    <option value="{{ class[0] }}">{{ class[0] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Start Date</label>
+                <input type="date" id="startDate">
+            </div>
+            <div class="filter-group">
+                <label>End Date</label>
+                <input type="date" id="endDate">
+            </div>
+            <button class="btn" onclick="loadReport()">Search</button>
+            <button class="btn" onclick="exportReport()" style="background:#3fb950;">Export Excel</button>
+        </div>
+        
+        <div class="table-wrap">
+            <table id="attendanceTable">
+                <thead>
+                    <tr><th>Name</th><th>Roll No</th><th>Class</th><th>Subject</th><th>Date</th><th>Time</th><th>Confidence</th></tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr><td colspan="7" style="text-align:center;">Select filters and click Search</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+        
+        async function loadReport() {
+            const subject = document.getElementById('subjectFilter').value;
+            const class_name = document.getElementById('classFilter').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            const url = `/api/attendance-data?subject_id=${subject}&class_name=${class_name}&start_date=${startDate}&end_date=${endDate}`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                const tbody = document.getElementById('tableBody');
+                tbody.innerHTML = '';
+                
+                if (data.records.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No records found</td></tr>';
+                    return;
+                }
+                
+                for (const record of data.records) {
+                    const row = tbody.insertRow();
+                    row.insertCell(0).textContent = record[0];
+                    row.insertCell(1).textContent = record[1];
+                    row.insertCell(2).textContent = record[2];
+                    row.insertCell(3).textContent = record[3];
+                    row.insertCell(4).textContent = record[4];
+                    row.insertCell(5).textContent = record[6];
+                    row.insertCell(6).textContent = record[7] ? record[7].toFixed(1) + '%' : '-';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+        
+        function exportReport() {
+            const subject = document.getElementById('subjectFilter').value;
+            const class_name = document.getElementById('classFilter').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            window.location.href = `/attendance/export?subject_id=${subject}&class_name=${class_name}&start_date=${startDate}&end_date=${endDate}`;
+        }
+    </script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Face Recognition AI - Login</title>
+    <title>Face Recognition AI - Teacher Login</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -12,18 +12,35 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         .login-box {
             background: #161b22;
             padding: 40px;
             border-radius: 12px;
-            width: 380px;
+            width: 400px;
             border: 1px solid #30363d;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
         }
-        h1 { color: #00d4ff; font-size: 22px; margin-bottom: 8px; }
-        p { color: #8b949e; font-size: 13px; margin-bottom: 28px; }
-        label { color: #8b949e; font-size: 13px; display: block; margin-bottom: 6px; }
+        h1 { 
+            color: #00d4ff; 
+            font-size: 24px; 
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .subtitle { 
+            color: #8b949e; 
+            font-size: 13px; 
+            margin-bottom: 28px;
+            text-align: center;
+        }
+        label { 
+            color: #8b949e; 
+            font-size: 13px; 
+            display: block; 
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
         input {
             width: 100%;
             padding: 10px 14px;
@@ -33,8 +50,13 @@
             color: #e6edf3;
             font-size: 14px;
             margin-bottom: 18px;
+            transition: all 0.3s ease;
         }
-        input:focus { outline: none; border-color: #00d4ff; }
+        input:focus { 
+            outline: none; 
+            border-color: #00d4ff;
+            box-shadow: 0 0 0 3px rgba(0,212,255,0.1);
+        }
         button {
             width: 100%;
             padding: 12px;
@@ -45,32 +67,86 @@
             font-size: 15px;
             font-weight: bold;
             cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
         }
-        button:hover { background: #00b8d9; }
-        .error {
-            background: #2d1b1b;
-            color: #f85149;
+        button:hover { 
+            background: #00b8d9;
+            transform: translateY(-1px);
+        }
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+        .flash {
             padding: 10px;
             border-radius: 6px;
-            margin-bottom: 16px;
             font-size: 13px;
+            margin-bottom: 10px;
+        }
+        .flash.success {
+            background: #0a2b1e;
+            color: #3fb950;
+            border: 1px solid #2ea043;
+        }
+        .flash.danger {
+            background: #2d1b1b;
+            color: #f85149;
+            border: 1px solid #da3633;
+        }
+        .flash.info {
+            background: #1b2d3b;
+            color: #79c0ff;
+            border: 1px solid #1f6feb;
+        }
+        .demo-info {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #30363d;
+            text-align: center;
+            font-size: 12px;
+            color: #6e7681;
+        }
+        .demo-info span {
+            color: #00d4ff;
+            font-family: monospace;
+        }
+        .icon {
+            text-align: center;
+            font-size: 48px;
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
     <div class="login-box">
-        <h1>🎭 Face Recognition AI</h1>
-        <p>Login to access the system</p>
-        {% if error %}
-        <div class="error">{{ error }}</div>
-        {% endif %}
+        <div class="icon">🎭</div>
+        <h1>Face Recognition AI</h1>
+        <p class="subtitle">Teacher Attendance System</p>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
         <form method="POST">
-            <label>Username</label>
-            <input type="text" name="username" placeholder="admin" required>
-            <label>Password</label>
+            <label>👤 Username</label>
+            <input type="text" name="username" placeholder="Enter username" required autofocus>
+            
+            <label>🔒 Password</label>
             <input type="password" name="password" placeholder="••••••••" required>
+            
             <button type="submit">Login →</button>
         </form>
+        
+        <div class="demo-info">
+            🔐 Demo Credentials<br>
+            <span>admin</span> / <span>admin123</span>
+        </div>
     </div>
 </body>
 </html>

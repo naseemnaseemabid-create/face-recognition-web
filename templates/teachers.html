@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teachers - Face Recognition AI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0d1117; font-family: 'Segoe UI', sans-serif; color: #e6edf3; }
+
+        .navbar {
+            background: #161b22; padding: 14px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #30363d;
+        }
+        .navbar h2 { color: #00d4ff; font-size: 16px; }
+        .menu-btn { display: none; background: none; border: none; color: #e6edf3; font-size: 24px; cursor: pointer; }
+
+        .sidebar {
+            width: 220px; background: #161b22; height: 100vh;
+            position: fixed; top: 0; left: 0; padding: 20px 0;
+            border-right: 1px solid #30363d;
+        }
+        .sidebar h2 { color: #00d4ff; padding: 0 20px; font-size: 16px; margin-bottom: 24px; }
+        .sidebar a {
+            display: block; padding: 12px 20px; color: #8b949e;
+            text-decoration: none; font-size: 14px;
+        }
+        .sidebar a:hover, .sidebar a.active { color: #00d4ff; background: #0d1117; }
+        
+        .main { margin-left: 220px; padding: 30px; }
+        h1 { font-size: 24px; margin-bottom: 20px; }
+        
+        .btn {
+            padding: 10px 20px; border-radius: 6px; border: none;
+            font-size: 14px; font-weight: bold; cursor: pointer;
+            text-decoration: none; display: inline-block;
+            background: #00d4ff; color: #000; margin-bottom: 20px;
+        }
+        
+        table { width: 100%; border-collapse: collapse; background: #161b22; border-radius: 10px; overflow: hidden; }
+        th { background: #1f2937; padding: 12px; text-align: left; color: #8b949e; }
+        td { padding: 10px 12px; border-bottom: 1px solid #30363d; }
+        
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .menu-btn { display: block; }
+            .main { margin-left: 0; padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎭 FACE RECOGNITION</h2>
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <h2>🎭 FACE RECOGNITION</h2>
+        <a href="/dashboard">📊 Dashboard</a>
+        <a href="/students">👨‍🎓 Students</a>
+        <a href="/teachers" class="active">👨‍🏫 Teachers</a>
+        <a href="/subjects">📖 Subjects</a>
+        <a href="/attendance/mark">✅ Mark Attendance</a>
+        <a href="/attendance/live">🎥 Live Recognition</a>
+        <a href="/attendance/report">📊 Reports</a>
+        <a href="/train">🧠 Train Model</a>
+        <a href="/logout">🚪 Logout</a>
+    </div>
+
+    <div class="main">
+        <h1>👨‍🏫 Manage Teachers</h1>
+        <a href="/teacher/register" class="btn">➕ Add New Teacher</a>
+        
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr><th>ID</th><th>Username</th><th>Name</th><th>Email</th><th>Department</th><th>Phone</th></tr>
+                </thead>
+                <tbody>
+                    {% for teacher in teachers %}
+                    <tr>
+                        <td>{{ teacher[1] }}</td>
+                        <td>{{ teacher[2] }}</td>
+                        <td>{{ teacher[3] }}</td>
+                        <td>{{ teacher[4] }}</td>
+                        <td>{{ teacher[5] }}</td>
+                        <td>{{ teacher[6] }}</td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="6" style="text-align:center;">No teachers found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+    </script>
+</body>
+</html>

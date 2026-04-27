@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capture Faces - Face Recognition AI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0d1117; font-family: 'Segoe UI', sans-serif; color: #e6edf3; }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+        }
+        h1 { color: #00d4ff; margin-bottom: 10px; }
+        .subtitle { color: #8b949e; margin-bottom: 20px; }
+        #video {
+            width: 100%;
+            max-width: 500px;
+            border-radius: 10px;
+            border: 2px solid #30363d;
+            margin-bottom: 20px;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn-capture {
+            background: #00d4ff;
+            color: #000;
+        }
+        .btn-train {
+            background: #3fb950;
+            color: #fff;
+        }
+        .btn-done {
+            background: #7c3aed;
+            color: #fff;
+        }
+        .progress {
+            margin: 20px 0;
+        }
+        .progress-bar {
+            background: #30363d;
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #00d4ff;
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .count {
+            margin-top: 10px;
+            color: #8b949e;
+        }
+        .message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+        }
+        .message.success { background: #0a2b1e; color: #3fb950; }
+        .message.error { background: #2d1b1b; color: #f85149; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>📸 Capture Face Images</h1>
+            <p class="subtitle">Student: {{ student_name }} (Roll: {{ roll_number }})</p>
+            
+            <video id="video" autoplay playsinline></video>
+            <canvas id="canvas" style="display:none;"></canvas>
+            
+            <div>
+                <button id="captureBtn" class="btn btn-capture">📷 Capture Face</button>
+                <button id="doneBtn" class="btn btn-done" style="display:none;">✅ Done - Go to Dashboard</button>
+            </div>
+            
+            <div class="progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="count" id="count">Captured: 0 / 20</div>
+            </div>
+            
+            <div id="message"></div>
+        </div>
+    </div>
+
+    <script>
+        let video = document.getElementById('video');
+        let canvas = document.getElementById('canvas');
+        let context = canvas.getContext('2d');
+        let stream = null;
+        let captureCount = 0;
+        let studentId = {{ student_id }};
+        
+        async function startCamera() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: 640, height: 480 }
+                });
+                video.srcObject = stream;
+            } catch (error) {
+                showMessage('Camera error: ' + error.message, 'error');
+            }
+        }
+        
+        async function captureFace() {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            const imageData = canvas.toDataURL('image/jpeg', 0.8);
+            
+            try {
+                const response = await fetch('/api/capture-face', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        student_id: studentId,
+                        image: imageData
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    captureCount = result.count;
+                    updateProgress(captureCount);
+                    showMessage(result.message, 'success');
+                    
+                    if (captureCount >= 20) {
+                        document.getElementById('captureBtn').style.display = 'none';
+                        document.getElementById('doneBtn').style.display = 'inline-block';
+                        showMessage('✅ 20 faces captured! Click Done to continue.', 'success');
+                    }
+                } else {
+                    showMessage(result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            }
+        }
+        
+        function updateProgress(count) {
+            const percent = (count / 20) * 100;
+            document.getElementById('progressFill').style.width = percent + '%';
+            document.getElementById('count').innerHTML = `Captured: ${count} / 20`;
+        }
+        
+        function showMessage(msg, type) {
+            const msgDiv = document.getElementById('message');
+            msgDiv.className = `message ${type}`;
+            msgDiv.innerHTML = msg;
+            setTimeout(() => {
+                msgDiv.className = '';
+                msgDiv.innerHTML = '';
+            }, 3000);
+        }
+        
+        function done() {
+            window.location.href = '/dashboard';
+        }
+        
+        document.getElementById('captureBtn').onclick = captureFace;
+        document.getElementById('doneBtn').onclick = done;
+        
+        startCamera();
+        
+        window.onbeforeunload = function() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+        };
+    </script>
+</body>
+</html>
