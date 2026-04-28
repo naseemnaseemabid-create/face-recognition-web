@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Promotions - Face Recognition AI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0d1117; font-family: 'Segoe UI', sans-serif; color: #e6edf3; }
+        
+        .navbar { background: #161b22; padding: 14px 20px; display: flex; justify-content: space-between; border-bottom: 1px solid #30363d; }
+        .navbar h2 { color: #00d4ff; font-size: 16px; }
+        .menu-btn { display: none; background: none; border: none; color: #e6edf3; font-size: 24px; cursor: pointer; }
+        
+        .sidebar {
+            width: 220px; background: #161b22; height: 100vh; position: fixed; top: 0; left: 0;
+            padding: 20px 0; border-right: 1px solid #30363d;
+        }
+        .sidebar h2 { color: #00d4ff; padding: 0 20px; font-size: 16px; margin-bottom: 24px; }
+        .sidebar a { display: block; padding: 12px 20px; color: #8b949e; text-decoration: none; font-size: 14px; }
+        .sidebar a:hover, .sidebar a.active { color: #00d4ff; background: #0d1117; border-left: 3px solid #00d4ff; }
+        .sidebar-footer { position: absolute; bottom: 20px; left: 0; right: 0; padding: 20px; border-top: 1px solid #30363d; }
+        
+        .main { margin-left: 220px; padding: 30px; }
+        h1 { font-size: 28px; margin-bottom: 20px; }
+        
+        .btn-promote { background: #00d4ff; color: #000; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 12px; cursor: pointer; }
+        .btn-bulk { background: #7c3aed; color: #fff; padding: 10px 20px; border: none; border-radius: 6px; margin-bottom: 20px; cursor: pointer; }
+        
+        table { width: 100%; border-collapse: collapse; background: #161b22; border-radius: 10px; overflow: hidden; }
+        th { background: #1f2937; padding: 12px; text-align: left; color: #8b949e; }
+        td { padding: 10px 12px; border-bottom: 1px solid #30363d; }
+        
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .menu-btn { display: block; }
+            .main { margin-left: 0; padding: 16px; overflow-x: auto; }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎭 FACE RECOGNITION AI</h2>
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <h2>🎭 TEACHER PORTAL</h2>
+        <a href="/dashboard">📊 Dashboard</a>
+        <a href="/students">👨‍🎓 Students</a>
+        <a href="/batches">🎓 Batches</a>
+        <a href="/promotions" class="active">⬆️ Promotions</a>
+        <div class="sidebar-footer">
+            <a href="/logout">🚪 Logout</a>
+        </div>
+    </div>
+
+    <div class="main">
+        <h1>⬆️ Student Promotions</h1>
+        
+        <button class="btn-bulk" onclick="bulkPromote()">⬆️ Promote All to Next Semester</button>
+        
+        <div class="table-wrap">
+            <table id="studentsTable">
+                <thead>
+                    <tr><th>Name</th><th>Roll Number</th><th>Class</th><th>Current Semester</th><th>Action</th></tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>{{ student[1] }}</td><td>{{ student[2] }}</td><td>{{ student[3] }}</td>
+                        <td>Semester {{ student[4] }}</td>
+                        <td><button class="btn-promote" onclick="promoteStudent({{ student[0] }})">Promote</button></td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="5" style="text-align:center;">No students found</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        async function promoteStudent(studentId) {
+            const response = await fetch('/api/promote-student', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ student_id: studentId })
+            });
+            const result = await response.json();
+            if (result.success) {
+                alert(result.message);
+                location.reload();
+            } else {
+                alert('Error: ' + result.message);
+            }
+        }
+        
+        async function bulkPromote() {
+            const semester = prompt('Enter current semester to promote:', '1');
+            if (semester) {
+                const response = await fetch('/api/bulk-promote', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ semester: parseInt(semester) })
+                });
+                const result = await response.json();
+                alert(result.message);
+                location.reload();
+            }
+        }
+        
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); }
+    </script>
+</body>
+</html>

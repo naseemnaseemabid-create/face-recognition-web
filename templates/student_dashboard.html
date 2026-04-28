@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Face Recognition AI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0d1117; font-family: 'Segoe UI', sans-serif; color: #e6edf3; }
+        
+        .navbar { background: #161b22; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; }
+        .navbar h2 { color: #00d4ff; font-size: 18px; }
+        .navbar h2 span { font-size: 12px; color: #8b949e; }
+        
+        .sidebar {
+            width: 240px; background: #161b22; height: 100vh; position: fixed; top: 0; left: 0;
+            padding: 20px 0; border-right: 1px solid #30363d;
+        }
+        .sidebar-header {
+            padding: 0 20px 20px 20px;
+            border-bottom: 1px solid #30363d;
+            margin-bottom: 20px;
+        }
+        .sidebar-header h3 { color: #00d4ff; font-size: 16px; }
+        .sidebar-header p { color: #8b949e; font-size: 11px; margin-top: 5px; }
+        .sidebar a { display: block; padding: 12px 20px; color: #8b949e; text-decoration: none; font-size: 14px; transition: all 0.3s; margin: 2px 0; }
+        .sidebar a:hover, .sidebar a.active { color: #00d4ff; background: #0d1117; border-left: 3px solid #00d4ff; }
+        .sidebar-footer { position: absolute; bottom: 20px; left: 0; right: 0; padding: 20px; border-top: 1px solid #30363d; }
+        .sidebar-footer a { color: #f85149 !important; }
+        
+        .main { margin-left: 240px; padding: 30px; }
+        h1 { font-size: 28px; margin-bottom: 8px; }
+        .subtitle { color: #8b949e; margin-bottom: 30px; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: #161b22; border: 1px solid #30363d; border-radius: 14px; padding: 20px; text-align: center; transition: all 0.3s; }
+        .stat-card:hover { transform: translateY(-3px); border-color: #00d4ff; }
+        .stat-number { font-size: 36px; font-weight: bold; color: #00d4ff; }
+        .stat-label { color: #8b949e; margin-top: 8px; font-size: 13px; }
+        
+        .section { background: #161b22; border: 1px solid #30363d; border-radius: 14px; padding: 20px; margin-bottom: 20px; }
+        .section h3 { margin-bottom: 15px; color: #00d4ff; font-size: 18px; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #1f2937; padding: 12px; text-align: left; color: #8b949e; font-weight: 500; }
+        td { padding: 10px 12px; border-bottom: 1px solid #30363d; }
+        tr:last-child td { border-bottom: none; }
+        
+        .btn { display: inline-block; padding: 12px 24px; background: #00d4ff; color: #000; text-decoration: none; border-radius: 8px; margin-right: 10px; font-weight: bold; transition: all 0.3s; }
+        .btn:hover { background: #00b8d9; transform: translateY(-2px); }
+        
+        .empty-state { text-align: center; padding: 40px; color: #8b949e; }
+        
+        @media (max-width: 768px) { 
+            .main { margin-left: 0; padding: 16px; } 
+            .sidebar { transform: translateX(-100%); width: 260px; z-index: 99; }
+            .sidebar.open { transform: translateX(0); }
+            .menu-btn { display: block; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .stat-number { font-size: 28px; }
+            h1 { font-size: 22px; }
+            .btn { padding: 8px 16px; font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎭 FACE RECOGNITION <span>STUDENT PORTAL</span></h2>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>🎭 STUDENT PORTAL</h3>
+            <p>Welcome {{ student_name }}</p>
+        </div>
+        <a href="/student/dashboard" class="active">📊 My Dashboard</a>
+        <a href="/student/attendance">📅 My Attendance</a>
+        <a href="/leave/apply">📝 Apply Leave</a>
+        <a href="/certificate/attendance">📜 Get Certificate</a>
+        <div class="sidebar-footer">
+            <a href="/student/logout">🚪 Logout</a>
+        </div>
+    </div>
+
+    <div class="main">
+        <h1>Welcome, {{ student_name }}! 👋</h1>
+        <p class="subtitle">Roll Number: {{ student_roll }} | Class: {{ student_class }}</p>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ attendance[0] or 0 }}</div>
+                <div class="stat-label">Days Present</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ attendance[1] or 0 }}</div>
+                <div class="stat-label">Total Days</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">
+                    {% if attendance[1] and attendance[1] > 0 %}
+                        {{ "%.1f"|format((attendance[0] or 0) / attendance[1] * 100) }}%
+                    {% else %}0%{% endif %}
+                </div>
+                <div class="stat-label">Attendance Percentage</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h3>📊 Subject-wise Attendance</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Present</th>
+                            <th>Total</th>
+                            <th>Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sub in subject_attendance %}
+                        <tr>
+                            <td>{{ sub[0] }}</td>
+                            <td>{{ sub[2] }}</td>
+                            <td>{{ sub[1] }}</td>
+                            <td>{{ "%.1f"|format((sub[2] / sub[1]) * 100) if sub[1] > 0 else 0 }}%</td>
+                        </tr>
+                        {% else %}
+                        <td><td colspan="4" class="empty-state">📭 No attendance records found</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="quick-actions">
+            <a href="/certificate/attendance" class="btn">📜 Download Certificate</a>
+            <a href="/leave/apply" class="btn">📝 Apply for Leave</a>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+    </script>
+</body>
+</html>

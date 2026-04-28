@@ -3,77 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Face Recognition AI</title>
+    <title>Dashboard - University of Kotli</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #0d1117; font-family: 'Segoe UI', sans-serif; color: #e6edf3; }
 
-        /* Navbar */
         .navbar {
-            background: #161b22; padding: 14px 20px;
+            background: #161b22; padding: 12px 25px;
             display: flex; justify-content: space-between; align-items: center;
             border-bottom: 1px solid #30363d; position: sticky; top: 0; z-index: 100;
         }
-        .navbar h2 { color: #00d4ff; font-size: 16px; }
-        .menu-btn {
-            display: none; background: none; border: none;
-            color: #e6edf3; font-size: 24px; cursor: pointer;
-        }
+        .logo { display: flex; align-items: center; gap: 12px; }
+        .logo-icon { font-size: 28px; }
+        .logo-text { font-size: 18px; font-weight: bold; background: linear-gradient(135deg, #00d4ff, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .logo-sub { font-size: 11px; color: #8b949e; }
+        .menu-btn { display: none; background: none; border: none; color: #e6edf3; font-size: 24px; cursor: pointer; }
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .user-name { font-size: 14px; color: #00d4ff; }
+        .user-dept { font-size: 12px; color: #8b949e; }
 
-        /* Sidebar */
         .sidebar {
-            width: 220px; background: #161b22; height: 100vh;
+            width: 260px; background: #161b22; height: 100vh;
             position: fixed; top: 0; left: 0; padding: 20px 0;
             border-right: 1px solid #30363d; z-index: 99;
-            transition: transform 0.3s;
-            overflow-y: auto;
+            transition: transform 0.3s; overflow-y: auto;
         }
-        .sidebar h2 { color: #00d4ff; padding: 0 20px; font-size: 16px; margin-bottom: 24px; }
-        .sidebar a {
-            display: block; padding: 12px 20px; color: #8b949e;
-            text-decoration: none; font-size: 14px; transition: all 0.3s;
-        }
-        .sidebar a:hover, .sidebar a.active { 
-            color: #00d4ff; background: #0d1117; 
-            border-left: 3px solid #00d4ff;
-        }
-        .sidebar .close-btn {
-            display: none; position: absolute; top: 10px; right: 10px;
-            background: none; border: none; color: #e6edf3;
-            font-size: 20px; cursor: pointer;
-        }
-        .sidebar-footer {
-            position: absolute; bottom: 20px; left: 0; right: 0;
-            padding: 20px 20px 0 20px;
-        }
-        .sidebar-footer a {
-            color: #f85149 !important;
-        }
+        .sidebar-header { padding: 0 20px 20px 20px; border-bottom: 1px solid #30363d; margin-bottom: 20px; }
+        .sidebar-header h3 { color: #00d4ff; font-size: 18px; }
+        .sidebar-header p { color: #8b949e; font-size: 11px; margin-top: 5px; }
+        .sidebar a { display: block; padding: 12px 20px; color: #8b949e; text-decoration: none; font-size: 14px; transition: all 0.3s; margin: 2px 0; }
+        .sidebar a:hover, .sidebar a.active { color: #00d4ff; background: #0d1117; border-left: 3px solid #00d4ff; }
+        .sidebar-footer { position: absolute; bottom: 20px; left: 0; right: 0; padding: 20px 20px 0 20px; border-top: 1px solid #30363d; margin-top: 20px; }
+        .sidebar-footer a { color: #f85149 !important; }
 
-        /* Main */
-        .main { margin-left: 220px; padding: 30px; }
-        h1 { font-size: 28px; margin-bottom: 6px; color: #e6edf3; }
-        .date { color: #8b949e; font-size: 14px; margin-bottom: 30px; }
-
-        /* Cards */
-        .cards { display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap; }
-        .card {
-            background: #161b22; border-radius: 12px; padding: 24px;
-            flex: 1; min-width: 160px; border: 1px solid #30363d; text-align: center;
-            transition: transform 0.3s, border-color 0.3s;
+        .main { margin-left: 260px; padding: 25px; }
+        
+        .welcome-banner {
+            background: linear-gradient(135deg, #1a2a3a 0%, #161b22 100%);
+            border-radius: 16px; padding: 25px; margin-bottom: 25px;
+            border: 1px solid #30363d;
         }
-        .card:hover {
-            transform: translateY(-3px);
-            border-color: #00d4ff;
-        }
-        .card .icon { font-size: 36px; margin-bottom: 10px; }
-        .card .value { font-size: 32px; font-weight: bold; }
-        .card .label { color: #8b949e; font-size: 13px; margin-top: 6px; }
+        .welcome-banner h1 { font-size: 24px; margin-bottom: 8px; }
+        .welcome-banner h1 span { color: #00d4ff; }
+        .welcome-banner p { color: #8b949e; font-size: 14px; }
+        .date-time { font-size: 13px; color: #00d4ff; margin-top: 10px; }
 
-        /* Actions */
-        .actions { display: flex; gap: 12px; margin-bottom: 35px; flex-wrap: wrap; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
+        .stat-card {
+            background: #161b22; border: 1px solid #30363d;
+            border-radius: 14px; padding: 20px;
+            transition: all 0.3s; position: relative; overflow: hidden;
+        }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #00d4ff; }
+        .stat-card:hover { transform: translateY(-3px); border-color: #00d4ff; }
+        .stat-icon { font-size: 32px; margin-bottom: 12px; }
+        .stat-number { font-size: 32px; font-weight: bold; color: #00d4ff; }
+        .stat-label { color: #8b949e; margin-top: 8px; font-size: 13px; }
+
+        .quick-actions { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
         .btn {
-            padding: 12px 24px; border-radius: 8px; border: none;
+            padding: 12px 24px; border-radius: 10px; border: none;
             font-size: 14px; font-weight: bold; cursor: pointer;
             text-decoration: none; display: inline-flex;
             align-items: center; gap: 8px; transition: all 0.3s;
@@ -84,196 +73,116 @@
         .btn-purple:hover { background: #6d28d9; transform: translateY(-2px); }
         .btn-green { background: #3fb950; color: #fff; }
         .btn-green:hover { background: #2ea043; transform: translateY(-2px); }
+        .btn-orange { background: #f0883e; color: #fff; }
+        .btn-orange:hover { background: #e07c2e; transform: translateY(-2px); }
 
-        /* Table */
+        .section-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .section-title h3 { font-size: 18px; color: #e6edf3; }
+        .section-title a { color: #00d4ff; text-decoration: none; font-size: 13px; }
+
+        .recent-section {
+            background: #161b22; border: 1px solid #30363d;
+            border-radius: 14px; padding: 20px;
+        }
         .table-wrap { overflow-x: auto; }
-        .section-title {
-            margin-bottom: 16px;
-            font-size: 18px;
-            color: #e6edf3;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        table { 
-            width: 100%; border-collapse: collapse; 
-            background: #161b22; border-radius: 10px; 
-            overflow: hidden; min-width: 500px;
-        }
-        th { 
-            background: #1f2937; padding: 14px; 
-            text-align: left; color: #8b949e; 
-            font-size: 13px; font-weight: 500;
-        }
-        td { 
-            padding: 12px 14px; font-size: 13px; 
-            border-bottom: 1px solid #30363d;
-        }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #1f2937; padding: 12px; text-align: left; color: #8b949e; font-weight: 500; font-size: 13px; }
+        td { padding: 12px; border-bottom: 1px solid #30363d; font-size: 13px; }
         tr:last-child td { border-bottom: none; }
         tr:hover td { background: #1f242e; }
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+        .badge-success { background: #0a2b1e; color: #3fb950; }
+        .empty-state { text-align: center; padding: 40px; color: #8b949e; }
 
-        .badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-        .badge-success {
-            background: #0a2b1e;
-            color: #3fb950;
-        }
-        .badge-info {
-            background: #1b2d3b;
-            color: #79c0ff;
-        }
-
-        /* Empty state */
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: #8b949e;
-        }
-
-        /* Mobile */
         @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); width: 260px; }
+            .sidebar { transform: translateX(-100%); width: 280px; }
             .sidebar.open { transform: translateX(0); }
-            .sidebar .close-btn { display: block; }
             .menu-btn { display: block; }
             .main { margin-left: 0; padding: 16px; }
-            .navbar { display: flex; }
-            h1 { font-size: 22px; }
-            .card { min-width: 130px; padding: 16px; }
-            .card .value { font-size: 24px; }
-            .card .icon { font-size: 28px; }
-            .btn { padding: 10px 16px; font-size: 13px; }
-            .section-title { font-size: 16px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .stat-card { padding: 15px; }
+            .stat-number { font-size: 24px; }
+            .btn { padding: 8px 16px; font-size: 12px; }
         }
+        @media (max-width: 480px) { .stats-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-    <!-- Navbar (mobile) -->
     <div class="navbar">
-        <h2>🎭 FACE RECOGNITION AI</h2>
+        <div class="logo">
+            <div class="logo-icon">🎭</div>
+            <div><div class="logo-text">UOK Attendance System</div><div class="logo-sub">University of Kotli</div></div>
+        </div>
         <button class="menu-btn" onclick="toggleMenu()">☰</button>
+        <div class="user-info"><div><div class="user-name">{{ user.name }}</div><div class="user-dept">{{ user.department }}</div></div></div>
     </div>
 
-    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
-        <button class="close-btn" onclick="toggleMenu()">✕</button>
-        <h2>🎭 FACE RECOGNITION</h2>
+        <div class="sidebar-header"><h3>🎭 Face Recognition</h3><p>Attendance Management System</p></div>
         <a href="/dashboard" class="active">📊 Dashboard</a>
         <a href="/students">👨‍🎓 Students</a>
         <a href="/teachers">👨‍🏫 Teachers</a>
+        <a href="/parents">👪 Parents</a>
         <a href="/subjects">📖 Subjects</a>
+        <a href="/batches">🎓 Batches</a>
         <a href="/attendance/mark">✅ Mark Attendance</a>
         <a href="/attendance/live">🎥 Live Recognition</a>
         <a href="/attendance/report">📊 Reports</a>
         <a href="/train">🧠 Train Model</a>
-        <a href="/persons">👤 All Persons</a>
-        <div class="sidebar-footer">
-            <a href="/logout">🚪 Logout</a>
+        <div class="sidebar-footer"><a href="/logout">🚪 Logout</a></div>
+    </div>
+
+    <div class="main">
+        <div class="welcome-banner">
+            <h1>Welcome back, <span>{{ user.name }}</span>! 👋</h1>
+            <p>Here's what's happening with your attendance system today.</p>
+            <div class="date-time" id="datetime"></div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-icon">👨‍🎓</div><div class="stat-number">{{ total_students }}</div><div class="stat-label">Total Students</div></div>
+            <div class="stat-card"><div class="stat-icon">📚</div><div class="stat-number">{{ my_subjects }}</div><div class="stat-label">My Subjects</div></div>
+            <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-number">{{ today_attendance }}</div><div class="stat-label">Present Today</div></div>
+            <div class="stat-card"><div class="stat-icon">📝</div><div class="stat-number">{{ marked_today }}</div><div class="stat-label">Marked Today</div></div>
+        </div>
+        
+        <div class="quick-actions">
+            <a href="/student/register" class="btn btn-cyan">➕ Register Student</a>
+            <a href="/parent/register" class="btn btn-purple">👪 Register Parent</a>
+            <a href="/attendance/live" class="btn btn-green">🎥 Live Attendance</a>
+            <a href="/train" class="btn btn-orange">🧠 Train Model</a>
+        </div>
+        
+        <div class="recent-section">
+            <div class="section-title"><h3>📋 Recent Attendance Records</h3><a href="/attendance/report">View All →</a></div>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Date</th><th>Subject</th><th>Class</th><th>Students</th><th>Status</th></tr></thead>
+                    <tbody>
+                        {% if recent_attendance %}
+                            {% for att in recent_attendance %}
+                            <tr><td>{{ att[0] }}</td><td>{{ att[2] }}</td><td>-</td><td>{{ att[1] }}</td><td><span class="badge badge-success">✓ Present</span></td></tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr><td colspan="5" class="empty-state">📭 No attendance records yet. Start marking attendance!</td></tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <!-- Main -->
-    <div class="main">
-        <h1>Dashboard Overview</h1>
-        <div class="date" id="datetime"></div>
-        
-        <div class="cards">
-            <div class="card" style="border-color:#00d4ff;">
-                <div class="icon">👨‍🎓</div>
-                <div class="value" style="color:#00d4ff;">{{ total_students }}</div>
-                <div class="label">Total Students</div>
-            </div>
-            <div class="card" style="border-color:#7c3aed;">
-                <div class="icon">👨‍🏫</div>
-                <div class="value" style="color:#7c3aed;">{{ my_subjects }}</div>
-                <div class="label">My Subjects</div>
-            </div>
-            <div class="card" style="border-color:#3fb950;">
-                <div class="icon">✅</div>
-                <div class="value" style="color:#3fb950;">{{ today_attendance }}</div>
-                <div class="label">Present Today</div>
-            </div>
-            <div class="card" style="border-color:#f0883e;">
-                <div class="icon">🎯</div>
-                <div class="value" style="color:#f0883e;">{{ marked_today }}</div>
-                <div class="label">Marked Today</div>
-            </div>
-        </div>
-        
-        <div class="actions">
-            <a href="/student/register" class="btn btn-cyan">➕ Register Student</a>
-            <a href="/attendance/live" class="btn btn-green">🎥 Live Attendance</a>
-            <a href="/train" class="btn btn-purple">🧠 Train Model</a>
-        </div>
-        
-        <div class="section-title">
-            <h2>📋 Recent Attendance Records</h2>
-        </div>
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Subject</th>
-                        <th>Class</th>
-                        <th>Students</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% if recent_attendance %}
-                        {% for att in recent_attendance %}
-                        <tr>
-                            <td>{{ att[0] }}</td>
-                            <td>{{ att[2] }}</td>
-                            <td>-</td>
-                            <td>{{ att[1] }}</td>
-                            <td><span class="badge badge-success">✓ Present</span></td>
-                        </tr>
-                        {% endfor %}
-                    {% else %}
-                        <tr>
-                            <td colspan="5" class="empty-state">No attendance records yet. Start marking attendance!</td>
-                        </tr>
-                    {% endif %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-    
     <script>
         function updateTime() {
             const now = new Date();
-            const options = { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            };
-            document.getElementById('datetime').textContent = now.toLocaleString('en-US', options);
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            document.getElementById('datetime').innerHTML = '📅 ' + now.toLocaleString('en-US', options);
         }
         updateTime();
         setInterval(updateTime, 1000);
-
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('open');
-        }
-        
-        // Close sidebar on link click (mobile)
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); }
         document.querySelectorAll('.sidebar a').forEach(link => {
-            link.addEventListener('click', () => {
-                if (window.innerWidth <= 768) {
-                    document.getElementById('sidebar').classList.remove('open');
-                }
-            });
+            link.addEventListener('click', () => { if (window.innerWidth <= 768) { document.getElementById('sidebar').classList.remove('open'); } });
         });
     </script>
 </body>

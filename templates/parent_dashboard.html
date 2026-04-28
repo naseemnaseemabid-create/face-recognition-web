@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parent Dashboard - Track Your Child</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0d1117; font-family: 'Segoe UI', sans-serif; color: #e6edf3; }
+        
+        .navbar { background: #161b22; padding: 14px 20px; border-bottom: 1px solid #30363d; }
+        .navbar h2 { color: #00d4ff; font-size: 16px; }
+        
+        .main { max-width: 900px; margin: 0 auto; padding: 30px; }
+        h1 { font-size: 28px; margin-bottom: 8px; }
+        .subtitle { color: #8b949e; margin-bottom: 30px; }
+        
+        .child-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 25px; margin-bottom: 25px; }
+        .child-name { font-size: 24px; color: #00d4ff; margin-bottom: 10px; }
+        .child-info { color: #8b949e; margin-bottom: 20px; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: #0d1117; border-radius: 10px; padding: 15px; text-align: center; border: 1px solid #30363d; }
+        .stat-number { font-size: 28px; font-weight: bold; color: #00d4ff; }
+        .stat-label { font-size: 12px; color: #8b949e; margin-top: 5px; }
+        
+        .section { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 20px; margin-top: 20px; }
+        .section h3 { margin-bottom: 15px; color: #00d4ff; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #1f2937; padding: 10px; text-align: left; color: #8b949e; }
+        td { padding: 8px 10px; border-bottom: 1px solid #30363d; }
+        .present { color: #3fb950; }
+        
+        @media (max-width: 768px) { .main { padding: 16px; } }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎭 FACE RECOGNITION AI</h2>
+    </div>
+
+    <div class="main">
+        <h1>👋 Hello, {{ parent_name }}!</h1>
+        <p class="subtitle">Track your child's academic progress</p>
+        
+        <div class="child-card">
+            <div class="child-name">🎓 {{ child_name }}</div>
+            <div class="child-info">Roll Number: {{ child_roll }} | Class: {{ child_class }}</div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">{{ attendance[0] or 0 }}</div>
+                    <div class="stat-label">Days Present</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ attendance[1] or 0 }}</div>
+                    <div class="stat-label">Total Days</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">
+                        {% if attendance[1] and attendance[1] > 0 %}
+                            {{ "%.1f"|format((attendance[0] or 0) / attendance[1] * 100) }}%
+                        {% else %}0%{% endif %}
+                    </div>
+                    <div class="stat-label">Attendance %</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h3>📋 Recent Attendance</h3>
+            <table>
+                <thead><tr><th>Date</th><th>Subject</th><th>Status</th></tr></thead>
+                <tbody>
+                    {% for rec in recent %}
+                    <tr>
+                        <td>{{ rec[0] }}</td>
+                        <td>{{ rec[1] }}</td>
+                        <td class="present">✓ {{ rec[2]|upper }}</td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="3" style="text-align:center;">No records found</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="section">
+            <h3>📊 Attendance Insights</h3>
+            <p style="color:#8b949e; line-height:1.6;">
+                Your child has maintained 
+                <strong style="color:#00d4ff;">
+                    {% if attendance[1] and attendance[1] > 0 %}
+                        {{ "%.1f"|format((attendance[0] or 0) / attendance[1] * 100) }}%
+                    {% else %}0%{% endif %}
+                </strong> 
+                attendance so far. Keep encouraging regular attendance for better academic performance!
+            </p>
+        </div>
+    </div>
+</body>
+</html>

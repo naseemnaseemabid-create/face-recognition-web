@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Batch - Face Recognition AI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0d1117; font-family: 'Segoe UI', sans-serif; color: #e6edf3; }
+        
+        .navbar { background: #161b22; padding: 14px 20px; display: flex; justify-content: space-between; border-bottom: 1px solid #30363d; }
+        .navbar h2 { color: #00d4ff; font-size: 16px; }
+        .menu-btn { display: none; background: none; border: none; color: #e6edf3; font-size: 24px; cursor: pointer; }
+        
+        .sidebar {
+            width: 220px; background: #161b22; height: 100vh; position: fixed; top: 0; left: 0;
+            padding: 20px 0; border-right: 1px solid #30363d;
+        }
+        .sidebar h2 { color: #00d4ff; padding: 0 20px; font-size: 16px; margin-bottom: 24px; }
+        .sidebar a { display: block; padding: 12px 20px; color: #8b949e; text-decoration: none; font-size: 14px; }
+        .sidebar a:hover { color: #00d4ff; background: #0d1117; }
+        
+        .main { margin-left: 220px; padding: 30px; }
+        h1 { font-size: 28px; margin-bottom: 20px; }
+        
+        .form-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 30px; max-width: 500px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #8b949e; font-size: 13px; }
+        input { width: 100%; padding: 10px 14px; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #e6edf3; font-size: 14px; }
+        input:focus { outline: none; border-color: #00d4ff; }
+        .btn-submit { background: #00d4ff; color: #000; padding: 12px 24px; border: none; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; width: 100%; }
+        .btn-submit:hover { background: #00b8d9; }
+        
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .menu-btn { display: block; }
+            .main { margin-left: 0; padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎭 FACE RECOGNITION AI</h2>
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <h2>🎭 FACE RECOGNITION</h2>
+        <a href="/dashboard">📊 Dashboard</a>
+        <a href="/students">👨‍🎓 Students</a>
+        <a href="/batches">🎓 Batches</a>
+        <a href="/attendance/live">🎥 Live Recognition</a>
+        <a href="/train">🧠 Train Model</a>
+        <a href="/logout">🚪 Logout</a>
+    </div>
+
+    <div class="main">
+        <h1>➕ Create New Batch</h1>
+        
+        <div class="form-card">
+            <form method="POST">
+                <div class="form-group">
+                    <label>Batch Name *</label>
+                    <input type="text" name="batch_name" placeholder="e.g., 2024-2028" required>
+                </div>
+                <div class="form-group">
+                    <label>Academic Year *</label>
+                    <input type="text" name="academic_year" placeholder="e.g., 2024-2025" required>
+                </div>
+                <div class="form-group">
+                    <label>Start Date *</label>
+                    <input type="date" name="start_date" required>
+                </div>
+                <div class="form-group">
+                    <label>End Date *</label>
+                    <input type="date" name="end_date" required>
+                </div>
+                <button type="submit" class="btn-submit">Create Batch (8 Semesters)</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); }
+    </script>
+</body>
+</html>

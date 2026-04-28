@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University of Kotli - Face Recognition Attendance System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0f1a 0%, #0d1117 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #e6edf3;
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(22, 27, 34, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #30363d;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            font-size: 32px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+
+        .logo-sub {
+            font-size: 12px;
+            color: #8b949e;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: #8b949e;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #00d4ff;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 60px 20px 40px;
+            background: linear-gradient(135deg, #00d4ff10 0%, #7c3aed10 100%);
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #00d4ff, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            color: #8b949e;
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Portal Cards */
+        .portal-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 40px;
+            color: #e6edf3;
+        }
+
+        .section-title span {
+            color: #00d4ff;
+        }
+
+        .portal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .portal-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .portal-card:hover {
+            transform: translateY(-5px);
+            border-color: #00d4ff;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.1);
+        }
+
+        .portal-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .portal-card h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #e6edf3;
+        }
+
+        .portal-card p {
+            color: #8b949e;
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .portal-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .teacher-btn {
+            background: #00d4ff;
+            color: #000;
+        }
+
+        .teacher-btn:hover {
+            background: #00b8d9;
+            transform: translateY(-2px);
+        }
+
+        .student-btn {
+            background: #7c3aed;
+            color: #fff;
+        }
+
+        .student-btn:hover {
+            background: #6d28d9;
+            transform: translateY(-2px);
+        }
+
+        .parent-btn {
+            background: #3fb950;
+            color: #fff;
+        }
+
+        .parent-btn:hover {
+            background: #2ea043;
+            transform: translateY(-2px);
+        }
+
+        /* Features Section */
+        .features {
+            background: #0d1117;
+            padding: 60px 20px;
+            border-top: 1px solid #30363d;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .features-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .feature-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .feature-item h4 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #00d4ff;
+        }
+
+        .feature-item p {
+            color: #8b949e;
+            font-size: 13px;
+        }
+
+        /* Footer */
+        .footer {
+            background: #0d1117;
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid #30363d;
+        }
+
+        .footer p {
+            color: #6e7681;
+            font-size: 12px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .hero p {
+                font-size: 14px;
+            }
+
+            .portal-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 24px;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .portal-card {
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .portal-card:nth-child(1) { animation-delay: 0.1s; }
+        .portal-card:nth-child(2) { animation-delay: 0.2s; }
+        .portal-card:nth-child(3) { animation-delay: 0.3s; }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="logo">
+            <div class="logo-icon">🎭</div>
+            <div>
+                <div class="logo-text">University of Kotli</div>
+                <div class="logo-sub">Face Recognition Attendance System</div>
+            </div>
+        </div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="#features">Features</a>
+            <a href="#about">About</a>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1>University of Kotli</h1>
+        <p>Advanced Face Recognition Attendance System for Modern Education</p>
+    </div>
+
+    <!-- Portal Section -->
+    <div class="portal-section">
+        <div class="section-title">
+            Choose Your <span>Portal</span>
+        </div>
+        <div class="portal-grid">
+            <!-- Teacher Portal -->
+            <div class="portal-card">
+                <div class="portal-icon">👨‍🏫</div>
+                <h3>Teacher Portal</h3>
+                <p>Mark attendance, manage students, create subjects, generate reports, and track academic progress.</p>
+                <a href="/login" class="portal-btn teacher-btn">Login as Teacher →</a>
+            </div>
+
+            <!-- Student Portal -->
+            <div class="portal-card">
+                <div class="portal-icon">👨‍🎓</div>
+                <h3>Student Portal</h3>
+                <p>View your attendance records, download certificates, apply for leave, and track your progress.</p>
+                <a href="/student/login" class="portal-btn student-btn">Login as Student →</a>
+            </div>
+
+            <!-- Parent Portal -->
+            <div class="portal-card">
+                <div class="portal-icon">👪</div>
+                <h3>Parent Portal</h3>
+                <p>Monitor your child's attendance, track academic performance, and stay updated.</p>
+                <a href="/parent/login" class="portal-btn parent-btn">Login as Parent →</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="features" id="features">
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-icon">🎯</div>
+                <h4>Face Recognition</h4>
+                <p>AI-powered real-time face detection and recognition for accurate attendance</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">📊</div>
+                <h4>Smart Reports</h4>
+                <p>Generate daily, monthly, and semester-wise attendance reports with analytics</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">📱</div>
+                <h4>Multi-Platform</h4>
+                <p>Access from any device - desktop, tablet, or mobile phone</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🔒</div>
+                <h4>Secure System</h4>
+                <p>Encrypted data storage and secure authentication for all users</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>© 2024 University of Kotli - Face Recognition Attendance System | All Rights Reserved</p>
+        <p style="margin-top: 10px;">📍 Kotli, Azad Jammu & Kashmir | 📧 info@uok.edu.pk | 📞 +92-XXXX-XXXXXX</p>
+    </div>
+
+    <script>
+        // Add smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
